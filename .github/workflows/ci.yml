@@ -1,0 +1,26 @@
+name: Build and correctness
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  release:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.x'
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --parallel 2
+      - run: ctest --test-dir build --output-on-failure
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DVCACHE_ENABLE_ASAN=ON -DVCACHE_BUILD_BENCHMARKS=OFF
+      - run: cmake --build build-asan --parallel 2
+      - run: ctest --test-dir build-asan --output-on-failure

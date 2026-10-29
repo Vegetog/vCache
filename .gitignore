@@ -1,0 +1,17 @@
+# Build artifacts
+build*/
+
+# Local tooling
+.claude/
+
+# Local benchmark data and results
+benchmark/data/
+benchmark/results/
+
+# Editor files
+.vscode/*
+!.vscode/settings.json
+*.swp
+.DS_Store
+__pycache__/
+*.pyc
